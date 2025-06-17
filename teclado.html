@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Botonera 48 pisos - 3 pestañas</title>
+<style>
+  body {
+    margin: 0;
+    background-color: #0b0c1f;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    color: white;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    background-color: #222;
+  }
+
+  .tab {
+    width: 100px;
+    padding: 12px 0;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    user-select: none;
+    font-weight: bold;
+    text-align: center;
+    box-sizing: border-box;
+    transition: background-color 0.2s ease;
+  }
+
+  .tab.active {
+    border-bottom-color:#f2f2f2; /*#00c3ff;*/
+    background-color: #111;
+  }
+
+  .panel {
+    flex-grow: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 60px);
+    grid-template-rows: repeat(4, 60px);
+    gap: 15px;
+    background-color: #111;
+    padding: 100px 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 70px 10px #aac7ffaa;
+    justify-content: center;
+    position: relative;
+  }
+
+  .btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #222;
+    color: #fff;
+    font-size: 18px;
+    border: 2px solid #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn.active {
+    background-color: #7F96E4;
+    border-color: #353b61;
+    box-shadow: 0 0 10px #7F96E4;
+  }
+
+  .btn.hover-red {
+    background-color: #ff0000 !important;
+    border-color: #ff0000 !important;
+    box-shadow: 0 0 10px #ff0000;
+  }
+
+  .btn.hover-green {
+    background-color: #00ff00 !important;
+    border-color: #00ff00 !important;
+    box-shadow: 0 0 10px #00ff00;
+  }
+
+  /* Estilos para el mensaje central */
+  #mensaje-container {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+    color: white;
+  }
+
+  #mensaje-arriba {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  #mensaje {
+    font-size: 100px;
+    font-weight: bold;
+  }
+
+  #mensaje-abajo {
+    font-size: 15px;
+    margin-top: 10px;
+  }
+#mensaje-imagen {
+    width: 130px;
+    height: auto;
+user-select: none;
+margin-top: 15px;
+margin-left: auto;
+    margin-right: auto;
+
+  
+      }
+
+  #mensaje-boton {
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #7F96E4;
+    border: none;
+ box-shadow: 0 0 10px #7F96E4;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+margin-top: 27px;
+margin-left: auto;
+    margin-right: auto;
+  }
+
+  #mensaje-boton:hover {
+    background-color: #0099cc;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-index="0">1 a 16</div>
+  <div class="tab" data-index="1">17 a 32</div>
+  <div class="tab" data-index="2">33 a 48</div>
+</div>
+
+<div class="panel" id="panel"></div>
+
+<!-- Contenedor del mensaje con textos arriba, centro y abajo -->
+<div id="mensaje-container">
+  <div id="mensaje-arriba"></div>
+  <div id="mensaje"></div>
+  <div id="mensaje-abajo"></div>
+<img id="mensaje-imagen" src="caminar.png" alt="Cabina" />
+  <button id="mensaje-boton">Regresar a Inicio</button>
+</div>
+
+
+
+<script>
+  const panel = document.getElementById('panel');
+  const tabs = document.querySelectorAll('.tab');
+  const mensajeContainer = document.getElementById('mensaje-container');
+  const mensajeArriba = document.getElementById('mensaje-arriba');
+  const mensajeTexto = document.getElementById('mensaje');
+  const mensajeAbajo = document.getElementById('mensaje-abajo');
+const mensajeImagen = document.getElementById('mensaje-imagen');
+  const mensajeBoton = document.getElementById('mensaje-boton');
+
+  const totalPisos = 48;
+  const columnas = 4;
+  const filas = 4;
+  const botonesPorPestana = columnas * filas;
+
+  function generarBotones(start, end) {
+    panel.innerHTML = '';
+
+    // Ocultar y limpiar mensaje cuando se generan nuevos botones
+    mensajeContainer.style.display = 'none';
+    mensajeArriba.textContent = '';
+    mensajeTexto.textContent = '';
+    mensajeAbajo.textContent = '';
+    mensajeImagen.src = '';
+    mensajeImagen.style.display = 'none';
+    mensajeBoton.style.display = 'none';
+
+    const pisos = [];
+    for(let i = start; i <= end && i <= totalPisos; i++) {
+      pisos.push(i);
+    }
+
+    const filasNecesarias = Math.ceil(pisos.length / columnas);
+    let grid = [];
+    for(let f=0; f < filasNecesarias; f++) {
+      grid[f] = [];
+    }
+    for(let i=0; i<pisos.length; i++) {
+      let fila = Math.floor(i / columnas);
+      grid[fila].push(pisos[i]);
+    }
+
+    grid.reverse();
+
+    for(let fila of grid) {
+      for(let piso of fila) {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.innerText = piso;
+
+        const isActive = activos.includes(piso);
+        if(isActive) btn.classList.add('active');
+
+        btn.onmouseenter = () => {
+          if(isActive) {
+            btn.classList.add('hover-green');
+          } else {
+            btn.classList.add('hover-red');
+          }
+        };
+
+        btn.onmouseleave = () => {
+          btn.classList.remove('hover-green');
+          btn.classList.remove('hover-red');
+        };
+
+        btn.onclick = () => {
+          if (!isActive) return;
+
+          // Oculta todos los botones
+          panel.querySelectorAll('.btn').forEach(b => b.style.display = 'none');
+
+          // Mostrar mensaje con textos arriba, medio y abajo
+          mensajeArriba.textContent = 'Tome el elevador';
+          mensajeTexto.textContent = 'C';
+          mensajeAbajo.textContent = `Llega en 10s`;
+          mensajeImagen.src = 'caminar.png';
+          mensajeImagen.style.display = 'block';
+
+          mensajeBoton.style.display = 'inline-block';
+
+          mensajeContainer.style.display = 'block';
+
+          // Reproduce audio
+          const msg = new SpeechSynthesisUtterance(`Piso ${piso}, cabina C, izquierda`);
+          msg.lang = 'es-MX';
+          speechSynthesis.speak(msg);
+        };
+
+        panel.appendChild(btn);
+      }
+    }
+
+    const totalBotones = filas * columnas;
+    const faltantes = totalBotones - pisos.length;
+    for(let i=0; i < faltantes; i++) {
+      const btn = document.createElement('button');
+      btn.style.visibility = 'hidden';
+      btn.style.pointerEvents = 'none';
+      btn.className = 'btn';
+      panel.appendChild(btn);
+    }
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const idx = parseInt(tab.dataset.index);
+
+      const start = idx * botonesPorPestana + 1;
+      const end = start + botonesPorPestana - 1;
+
+      generarBotones(start, end);
+    });
+  });
+
+  function generarActivosAleatorios(cantidad = 10) {
+    const set = new Set();
+    while (set.size < cantidad) {
+      const random = Math.floor(Math.random() * totalPisos) + 1;
+      set.add(random);
+    }
+    return Array.from(set);
+  }
+
+  let activos = generarActivosAleatorios();
+
+  generarBotones(1, botonesPorPestana);
+mensajeBoton.addEventListener('click', () => {
+  window.location.href = 'index.html'; // ← cambia "inicio.html" por el nombre real del archivo
+});
+
+</script>
+</body>
+</html>
