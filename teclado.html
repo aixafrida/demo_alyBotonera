@@ -255,6 +255,10 @@ const mensajeImagen = document.getElementById('mensaje-imagen');
           const msg = new SpeechSynthesisUtterance(`Piso ${piso}, cabina C, izquierda`);
           msg.lang = 'es-MX';
           speechSynthesis.speak(msg);
+
+          setTimeout(() => {
+  window.location.href = 'index.html';
+}, 5000);
         };
 
         panel.appendChild(btn);
